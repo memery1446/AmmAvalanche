@@ -8,7 +8,7 @@ const tokens = (n) => {
 const ether = tokens
 
 describe('AMM', () => {
-  let accounts, token, deployer, token1, token2, amm
+  let accounts, deployer, token1, token2, amm
 
   beforeEach(async () => {
     accounts = await ethers.getSigners()
@@ -19,7 +19,7 @@ describe('AMM', () => {
     token2 = await Token.deploy('USD Token', 'USD', '1000000')  // 1 mill
     
     const AMM = await ethers.getContractFactory('AMM')
-    amm = await AMM.deploy()
+    amm = await AMM.deploy(token1.address, token2.address)
   
   })
 
@@ -27,7 +27,14 @@ describe('AMM', () => {
   
     it('has an address', async () => {
       expect(amm.address).to.not.equal(0x0) // Will check for addy 
-      console.log(amm.address)
+    })
+
+    it('tracks token1 address', async () => {
+      expect(await amm.token1()).to.equal(token1.address)
+    })
+
+    it('tracks token2 address', async () => {
+      expect(await amm.token2()).to.equal(token2.address)
     })
 
 })
