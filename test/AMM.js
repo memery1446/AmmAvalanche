@@ -77,7 +77,29 @@ describe('AMM', () => {
       expect(await amm.token1Balance()).to.equal(amount)
       expect(await amm.token2Balance()).to.equal(amount)
 
-      console.log(await amm.K())
+      //console.log(await amm.K())
+
+      // Check that deployer has 100 shares
+
+      expect(await amm.shares(deployer.address)).to.equal(tokens(100))
+
+      // Check that pool has 100 total shares
+      expect(await amm.totalShares()).to.equal(tokens(100))
+
+      ///////////////////
+       // LP ADDS LIQUIDITY
+
+      // LP approves tokens
+      amount = tokens(50000)
+      transaction = await token1.connect(liquidityProvider).approve(amm.address, amount)
+      await transaction.wait()
+
+      // LP adds tokens
+      transaction = await amm.connect(liquidityProvider).approve(amm.address, amount)
+      await transaction.wait()
+
+      // LP should have 50 shares
+      expect(await amm.shares(liquidityProvider.address)).to.equal(tokens(50))
     })
    
   })
