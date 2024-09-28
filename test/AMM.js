@@ -8,16 +8,31 @@ const tokens = (n) => {
 const ether = tokens
 
 describe('AMM', () => {
-  let accounts, deployer, token1, token2, amm
+  let accounts, 
+  deployer, 
+  liquidityProvider
+
+  let token1, 
+  token2, 
+  amm
 
   beforeEach(async () => {
     accounts = await ethers.getSigners()
     deployer = accounts[0]
+    liquidityProvider = accounts[1]
 
     const Token = await ethers.getContractFactory('Token')
     token1 = await Token.deploy('Dapp University', 'DAPP', '1000000') // 1 mill
     token2 = await Token.deploy('USD Token', 'USD', '1000000')  // 1 mill
     
+    // Send tokens to the liquidityProvider
+    let transaction = await token1.connect(deployer).transfer(liquidityProvider.address, tokens(100000))
+    await transaction.wait()
+
+    transaction = await token2.connect(deployer).transfer(liquidityProvider.address, tokens(100000))
+    await transaction.wait()
+
+    // Deploy AMM
     const AMM = await ethers.getContractFactory('AMM')
     amm = await AMM.deploy(token1.address, token2.address)
   
@@ -38,4 +53,60 @@ describe('AMM', () => {
     })
 
 })
+
+  describe('Swapping Tokens', () => {
+    let amount, transaction, result
+
+    it('facilitates swaps', async () => {
+      // Deployer approves 100k tokens
+      amount = tokens(100000)
+      transaction = await token1.connect(deployer).approve(amm.address, amount)
+      await transaction.wait()
+
+      transaction = await token2.connect(deployer).approve(amm.address, amount)
+
+
+      // Deployer adds liquidity
+      transaction = await amm.connect(deployer).addLiquidity(amount, amount)
+      await transaction.wait()
+
+      // Check that AMM receives tokens
+      expect(await token1.balanceOf(amm.address)).to.equal(amount)
+      expect(await token2.balanceOf(amm.address)).to.equal(amount)
+
+      expect(await amm.token1Balance()).to.equal(amount)
+      expect(await amm.token2Balance()).to.equal(amount)
+
+      console.log(await amm.K())
+    })
+   
+  })
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
