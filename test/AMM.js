@@ -6,6 +6,7 @@ const tokens = (n) => {
 }
 
 const ether = tokens
+const shares = ether
 
 describe('AMM', () => {
   let accounts, 
@@ -270,6 +271,33 @@ describe('AMM', () => {
       console.log(`AMM token1 Balance: ${ethers.utils.formatEther(await amm.token1Balance())} \n`)
       console.log(`AMM token2 Balance: ${ethers.utils.formatEther(await amm.token2Balance())} \n`)
 
+      // Check LP balance before removing tokens
+
+      balance = await token1.balanceOf(liquidityProvider.address)
+      console.log(`Liquidity Provider Token1 balance before removing funds: ${ethers.utils.formatEther(balance)} \n`)
+
+      balance = await token2.balanceOf(liquidityProvider.address)
+      console.log(`Liquidity Provider Token2 balance before removing funds: ${ethers.utils.formatEther(balance)} \n`)
+
+      // LP removes tokens from AMM pool 
+      transaction = await amm.connect(liquidityProvider).removeLiquidity(shares(50)) 
+      await transaction.wait()
+
+      // Check LP balance after removing funds
+      balance = await token1.balanceOf(liquidityProvider.address)
+      console.log(`Liquidity Provider Token1 balance after removing funds: ${ethers.utils.formatEther(balance)} \n`)
+
+      balance = await token2.balanceOf(liquidityProvider.address)
+      console.log(`Liquidity Provider Token2 balance after removing funds: ${ethers.utils.formatEther(balance)} \n`)
+
+      // LP should hava -0- shares
+      expect(await amm.shares(liquidityProvider.address)).to.equal(0)
+
+      // Deployer should have 100 shares
+      expect(await amm.shares(deployer.address)).to.equal(shares(100))
+
+      // AMM pool has 100 total shares
+      expect(await amm.totalShares()).to.equal(shares(100))
     })
    
   })

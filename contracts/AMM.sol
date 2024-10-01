@@ -183,14 +183,14 @@ contract AMM{
 
   // Determine how many tokens will be withdrawn
   	function calculateWithdrawAmount(uint256 _share) public view returns (uint256 token1Amount, uint256 token2Amount) {
-  		require(_share <= totalShares, 'must be less than total shares')
+  		require(_share <= totalShares, 'must be less than total shares');
   		token1Amount = (_share * token1Balance) / totalShares;
   		token2Amount = (_share * token2Balance) / totalShares;
   	}
 
   function removeLiquidity(uint256 _share) external returns (uint256 token1Amount, uint256 token2Amount) {
   		require(_share <= shares[msg.sender], 'cannot withdraw more shares than you have');
-  		(token1Amount, token2Ammount) = calculateWithdrawAmount(_share);
+  		(token1Amount, token2Amount) = calculateWithdrawAmount(_share);
   		shares[msg.sender] -= _share;
   		totalShares -= _share;
 
