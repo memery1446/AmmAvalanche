@@ -262,6 +262,14 @@ describe('AMM', () => {
       // Check price atfer swapping //token2 bal/token1bal
       console.log(`Price: ${await amm.token2Balance() / await amm.token1Balance()}\n`)
 
+      /////////////////////////////////////////////////////////////////////////
+      // Removing Liquidity
+      //
+
+
+      console.log(`AMM token1 Balance: ${ethers.utils.formatEther(await amm.token1Balance())} \n`)
+      console.log(`AMM token2 Balance: ${ethers.utils.formatEther(await amm.token2Balance())} \n`)
+
     })
    
   })
