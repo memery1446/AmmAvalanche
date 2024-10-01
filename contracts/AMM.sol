@@ -97,7 +97,7 @@ contract AMM{
 		// Don't let pool go to -0-
 		if(token2Amount == token2Balance) {
 			token2Amount --;
-		}
+	}
 
 		require(token2Amount < token2Balance, 'swap cannot exeed pool balance');
 
@@ -131,7 +131,7 @@ contract AMM{
 			block.timestamp
 	);
 
-}
+	}
 
 	// Returns amount of token1 received when swapping token2
 	function calculateToken2Swap(uint256 _token2Amount) public view returns (uint256 token1Amount)
@@ -144,7 +144,7 @@ contract AMM{
 		// Don't let pool go to -0-
 		if(token1Amount == token1Balance) {
 			token1Amount --;
-		}
+	}
 
 		require(token1Amount < token1Balance, 'swap cannot exeed pool balance');
 
@@ -179,8 +179,7 @@ contract AMM{
 			token2Balance,
 			block.timestamp
 	);
-
-}
+  }
 }
 
 
