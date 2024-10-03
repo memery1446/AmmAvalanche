@@ -10,7 +10,9 @@ import Loading from './Loading';
 import { 
   loadProvider,
   loadNetwork,
-  loadAccount
+  loadAccount,
+  loadTokens,
+  loadAMM
 
 } from '../store/interactions'           
 
@@ -31,6 +33,9 @@ function App() {
     // Fetch accounts
     await loadAccount(dispatch)                      
 
+    // Initiate contracts
+    await loadTokens(provider, chainId, dispatch) 
+    await loadAMM(provider, chainId, dispatch)  
 
   }
 
@@ -43,13 +48,13 @@ function App() {
     <Container>
         <Navigation account={'0x0...'} />
 
-        <h1 className='my-4 text-center'>React Hardhat Template</h1>
+        <h1 className='my-4 text-center'>Marks AMM Project</h1>
 
           <>
             <p className='text-center'><strong>Your ETH Balance:</strong> 0 ETH</p>
             <p className='text-center'>Edit App.js to add your code here.</p>
          </>
-      )}
+      
     </Container>
   )
 }
