@@ -13,7 +13,7 @@ export const amm= createSlice({
     },
   sharesLoaded:(state, action) => {                             
       state.shares = action.payload
-    }
+    },
     
   }
 })

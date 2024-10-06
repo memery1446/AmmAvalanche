@@ -7,7 +7,8 @@ import amm from './reducers/amm'
 export const store = configureStore({
   reducer: {
     provider,
-    tokens
+    tokens,
+    amm
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
