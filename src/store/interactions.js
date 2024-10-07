@@ -76,3 +76,24 @@ export const loadBalances = async (amm, tokens, account, dispatch) => {
   dispatch(sharesLoaded(ethers.utils.formatUnits(shares.toString(), 'ether')))
 }
 
+// ------------------------------------------------------------------------------
+// SWAP
+
+export const swap = async (provider, amm, token, symbol, amount, dispatch) => {
+	
+	let transaction
+
+	const signer = await provider.getSigner()
+
+	transaction = await token.connect(signer).approve(amm.address, amount)
+	await transaction.wait()
+
+	if (symbol === 'DAPP') {
+		transaction = await amm.connect(signer).swapToken1(amount) // DAPP token
+	} else {
+		transaction = await amm.connect(signer).swapToken2(amount) // USD token
+	}
+	
+		await transaction.wait()
+}
+
