@@ -7,9 +7,11 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
+import Spinner from 'react-bootstrap/Spinner'; 
 import { ethers } from 'ethers' 
 
-import { swap } from '../store/interactions' 
+import Alert from './Alert' 
+import { swap, loadBalances } from '../store/interactions' 
 
 const Swap = () => {
   const [inputToken, setInputToken] = useState(null)
@@ -17,7 +19,9 @@ const Swap = () => {
   const [inputAmount, setInputAmount] = useState(0)  
   const [outputAmount, setOutputAmount] = useState(0)  
 
-  const [price, setPrice] = useState(0)  
+  const [price, setPrice] = useState(0) 
+
+  const [showAlert, setShowAlert] = useState(false)  
 
   const provider = useSelector(state => state.provider.connection)                      
   const account = useSelector(state => state.provider.account)
@@ -26,6 +30,9 @@ const Swap = () => {
   const balances = useSelector(state => state.tokens.balances)
 
   const amm = useSelector(state => state.amm.contract)
+  const isSwapping = useSelector(state => state.amm.swapping.isSwapping) 
+  const isSuccess = useSelector(state => state.amm.swapping.isSuccess)    
+  const transactionHash = useSelector(state => state.amm.swapping.transactionHash) 
 
   const dispatch = useDispatch() 
 
@@ -61,7 +68,9 @@ const Swap = () => {
 
   const swapHandler = async (e) => {                     
     e.preventDefault()
-    // Make sure tokens are not the same   
+    
+    setShowAlert(false)
+
     if (inputToken === outputToken) {
     window.alert('Invalid Token Pair')
     return
@@ -72,12 +81,14 @@ const Swap = () => {
     if (inputToken === 'DAPP') {
       await swap(provider, amm, tokens[0], inputToken, _inputAmount, dispatch) 
     } else {
-
-    
+      await swap(provider, amm, tokens[1], inputToken, _inputAmount, dispatch)
   }
+      await loadBalances(amm, tokens, account, dispatch)            
+      await getPrice()
 
-    
-  }
+      setShowAlert(true)
+
+}
 
   const getPrice = async () => {
     if(inputToken === outputToken) {
@@ -172,7 +183,11 @@ const Swap = () => {
             </Row>
 
             <Row className='my-3'>
+              {isSwapping ? (
+              <Spinner animation='border' style={{ display: 'block', margin: '0 auto' }} />        
+              ) : (
               <Button type='submit'>Swap</Button>
+              )}
               <Form.Text muted>
                 Exchange Rate: {price}
               </Form.Text>
@@ -190,6 +205,33 @@ const Swap = () => {
           </p>
         )}
       </Card>
+
+        {isSwapping ? (
+      <Alert 
+        message={'Swap Pending...'}
+        transactionHash={null}
+        variant={'info'}
+        setShowAlert={setShowAlert}
+      />
+      ) : isSuccess && showAlert ? (
+      <Alert 
+        message={'Swap Successful'}
+        transactionHash={transactionHash}
+        variant={'success'}
+        setShowAlert={setShowAlert}
+      />
+      ) : !isSuccess && showAlert ? (
+      <Alert 
+        message={'Swap Failed'}
+        transactionHash={null}
+        variant={'danger'}
+        setShowAlert={setShowAlert}
+      />
+      ) : (
+        <></>
+      )}
+
+
     </div>
   );
 }

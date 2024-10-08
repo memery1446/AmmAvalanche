@@ -14,7 +14,10 @@ import {
 
 import { 
 	setContract,
-	sharesLoaded 
+	sharesLoaded,
+	swapRequest,
+	swapSuccess,
+	swapFail
 } from './reducers/amm'
 
 import TOKEN_ABI from '../abis/Token.json';
@@ -80,7 +83,9 @@ export const loadBalances = async (amm, tokens, account, dispatch) => {
 // SWAP
 
 export const swap = async (provider, amm, token, symbol, amount, dispatch) => {
-	
+	try {
+	dispatch(swapRequest())
+
 	let transaction
 
 	const signer = await provider.getSigner()
@@ -95,5 +100,12 @@ export const swap = async (provider, amm, token, symbol, amount, dispatch) => {
 	}
 	
 		await transaction.wait()
+
+		dispatch(swapSuccess(transaction.hash))
+} catch (error) {
+		dispatch(swapFail())
+	}
+
+	
 }
 
