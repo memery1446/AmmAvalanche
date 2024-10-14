@@ -129,7 +129,11 @@ const Deposit = () => {
           </Row>
 
           <Row className='my-3'>
-            <Button type='submit'>Deposit</Button>
+              {isDepositing ? (
+                <Spinner animation="border" style={{ display: 'block', margin: '0 auto' }} />
+              ) : (
+                <Button type="submit">Deposit</Button>
+              )}
             </Row>
 
             </Form>
