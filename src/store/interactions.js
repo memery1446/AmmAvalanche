@@ -1,29 +1,30 @@
 import { ethers } from 'ethers'
 
-import { 
-		setProvider,
-		setNetwork,
-		setAccount
- } from './reducers/provider'  
+import {
+  setProvider,
+  setNetwork,
+  setAccount
+} from './reducers/provider'
 
-import { 
-	setContracts,
-	setSymbols,
-	balancesLoaded
+import {
+  setContracts,
+  setSymbols,
+  balancesLoaded
 } from './reducers/tokens'
 
-import { 
-	setContract,
-	sharesLoaded,
-	depositRequest,
-	depositSuccess,
-	depositFail,
-	withdrawRequest,
-	withdrawSuccess,
-	withdrawFail,
-	swapRequest,
-	swapSuccess,
-	swapFail
+import {
+  setContract,
+  sharesLoaded,
+  swapsLoaded,
+  depositRequest,
+  depositSuccess,
+  depositFail,
+  withdrawRequest,
+  withdrawSuccess,
+  withdrawFail,
+  swapRequest,
+  swapSuccess,
+  swapFail
 } from './reducers/amm'
 
 import TOKEN_ABI from '../abis/Token.json';
@@ -70,6 +71,7 @@ export const loadAMM = async (provider, chainId, dispatch) => {
   return amm
 }
 
+
 // ------------------------------------------------------------------------------
 // LOAD BALANCES & SHARES
 export const loadBalances = async (amm, tokens, account, dispatch) => {
@@ -85,82 +87,90 @@ export const loadBalances = async (amm, tokens, account, dispatch) => {
   dispatch(sharesLoaded(ethers.utils.formatUnits(shares.toString(), 'ether')))
 }
 
+
 // ------------------------------------------------------------------------------
-// ADD LIQUIDITY
+// ADD LIQUDITY
 export const addLiquidity = async (provider, amm, tokens, amounts, dispatch) => {
+  try {
+    dispatch(depositRequest())
 
-	try {
+    const signer = await provider.getSigner()
 
-	dispatch(depositRequest())
+    let transaction
 
-	const signer = await provider.getSigner()
-	
-	let transaction
-	// Approval
-	transaction = await tokens[0].connect(signer).approve(amm.address, amounts[0])
-	await transaction.wait()
+    transaction = await tokens[0].connect(signer).approve(amm.address, amounts[0])
+    await transaction.wait()
 
-	transaction = await tokens[1].connect(signer).approve(amm.address, amounts[1])
-	await transaction.wait()
-	
-	// Now that approved we can call addLiquidity()//
-	transaction = await amm.connect(signer).addLiquidity(amounts[0], amounts[1])
-	await transaction.wait()
+    transaction = await tokens[1].connect(signer).approve(amm.address, amounts[1])
+    await transaction.wait()
 
-	dispatch(depositSuccess(transaction.hash))
-	} catch (error) {
-	dispatch(depositFail())    
-	}
+    transaction = await amm.connect(signer).addLiquidity(amounts[0], amounts[1])
+    await transaction.wait()
+
+    dispatch(depositSuccess(transaction.hash))
+  } catch (error) {
+    dispatch(depositFail())
+  }
 }
 
 // ------------------------------------------------------------------------------
-// REMOVE LIQUIDITY
-
+// REMOVE LIQUDITY
 export const removeLiquidity = async (provider, amm, shares, dispatch) => {
+  try {
+    dispatch(withdrawRequest())
 
-	try {
+    const signer = await provider.getSigner()
 
-	dispatch(withdrawRequest()) //function not created yet but will be...
+    let transaction = await amm.connect(signer).removeLiquidity(shares)
+    await transaction.wait()
 
-	const signer = await provider.getSigner()
-	
-	let transaction = await amm.connect(signer).removeLiquidity(shares)
-	await transaction.wait()
-
-	dispatch(withdrawSuccess(transaction.hash))
-	} catch (error) {
-	dispatch(withdrawFail())    
-	}
-
+    dispatch(withdrawSuccess(transaction.hash))
+  } catch (error) {
+    dispatch(withdrawFail())
+  }
 }
 
 // ------------------------------------------------------------------------------
 // SWAP
 
 export const swap = async (provider, amm, token, symbol, amount, dispatch) => {
-	try {
-	dispatch(swapRequest())
+  try {
 
-	let transaction
+    dispatch(swapRequest())
 
-	const signer = await provider.getSigner()
+    let transaction
 
-	transaction = await token.connect(signer).approve(amm.address, amount)
-	await transaction.wait()
+    const signer = await provider.getSigner()
 
-	if (symbol === 'DAPP') {
-		transaction = await amm.connect(signer).swapToken1(amount) // DAPP token
-	} else {
-		transaction = await amm.connect(signer).swapToken2(amount) // USD token
-	}
-	
-		await transaction.wait()
+    transaction = await token.connect(signer).approve(amm.address, amount)
+    await transaction.wait()
 
-		dispatch(swapSuccess(transaction.hash))
-} catch (error) {
-		dispatch(swapFail())
-	}
+    if (symbol === "DAPP") {
+      transaction = await amm.connect(signer).swapToken1(amount)
+    } else {
+      transaction = await amm.connect(signer).swapToken2(amount)
+    }
 
-	
+    await transaction.wait()
+
+    dispatch(swapSuccess(transaction.hash))
+
+  } catch (error) {
+    dispatch(swapFail())
+  }
 }
 
+
+// ------------------------------------------------------------------------------
+// LOAD ALL SWAPS
+
+export const loadAllSwaps = async (provider, amm, dispatch) => {
+  const block = await provider.getBlockNumber()
+
+  const swapStream = await amm.queryFilter('Swap', 0, block)
+  const swaps = swapStream.map(event => {
+    return { hash: event.transactionHash, args: event.args }
+  })
+
+  dispatch(swapsLoaded(swaps))
+}
