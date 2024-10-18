@@ -120,7 +120,7 @@ const Swap = () => {
 
   return (
     <div>
-      <Card style={{ maxWidth: '450px' }} className='mx-left px-4'>
+      <Card style={{ maxWidth: '450px' }} className='mx-auto px-4'>
         {account ? (
           <Form onSubmit={swapHandler} style={{ maxWidth: '450px', margin: '50px auto' }}>
 
@@ -150,7 +150,7 @@ const Swap = () => {
                   variant="outline-secondary"
                   title={inputToken ? inputToken : "Select Token"}
                 >
-                  <Dropdown.Item onClick={(e) => setInputToken(e.target.innerHTML)} >ORCH</Dropdown.Item>
+                  <Dropdown.Item onClick={(e) => setInputToken(e.target.innerHTML)} >DAPP</Dropdown.Item>
                   <Dropdown.Item onClick={(e) => setInputToken(e.target.innerHTML)} >USD</Dropdown.Item>
                 </DropdownButton>
               </InputGroup>
@@ -180,7 +180,7 @@ const Swap = () => {
                   variant="outline-secondary"
                   title={outputToken ? outputToken : "Select Token"}
                 >
-                  <Dropdown.Item onClick={(e) => setOutputToken(e.target.innerHTML)}>ORCH</Dropdown.Item>
+                  <Dropdown.Item onClick={(e) => setOutputToken(e.target.innerHTML)}>DAPP</Dropdown.Item>
                   <Dropdown.Item onClick={(e) => setOutputToken(e.target.innerHTML)}>USD</Dropdown.Item>
                 </DropdownButton>
               </InputGroup>
