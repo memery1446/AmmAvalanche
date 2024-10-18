@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { HashRouter, Routes, Route } from 'react-router-dom'             
 import { Container } from 'react-bootstrap'
 import { ethers } from 'ethers'
+import React from 'react';
 
 // Components
 import Navigation from './Navigation';
@@ -25,6 +26,8 @@ import {
 
 
 function App() {
+
+  
 
   const dispatch = useDispatch()                    
 
@@ -61,7 +64,9 @@ function App() {
   }, []);
 
   return(
+ 
     <Container>
+
        <HashRouter>
 
 
@@ -81,9 +86,10 @@ function App() {
        </HashRouter>                                      
 
       
-
+ <style>{'body { background-color: #d5d8dc; }'}</style>
        
     </Container>
+   
   )
 }
 
