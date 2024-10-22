@@ -9,19 +9,19 @@ const hre = require("hardhat");
 async function main() {
   const Token = await hre.ethers.getContractFactory('Token')
 
-  // Deploy Token 1
-  let dapp = await Token.deploy('Dapp Token', 'DAPP', '1000000') // 1 million tokens
-  await dapp.deployed()
-  console.log(`Dapp Token deployed to: ${dapp.address}\n`)
+  // // Deploy Token 1
+  // let dapp = await Token.deploy('Dapp Token', 'DAPP', '1000000') // 1 million tokens
+  // await dapp.deployed()
+  // console.log(`Dapp Token deployed to: ${dapp.address}\n`)
 
-  // Deploy Token 2
-  const usd = await Token.deploy('USD Token', 'USD', '1000000') // 1 million tokens
-  await usd.deployed()
-  console.log(`USD Token deployed to: ${usd.address}\n`)
+  // // Deploy Token 2
+  // const usd = await Token.deploy('USD Token', 'USD', '1000000') // 1 million tokens
+  // await usd.deployed()
+  // console.log(`USD Token deployed to: ${usd.address}\n`)
 
   // Deploy AMM
   const AMM = await hre.ethers.getContractFactory('AMM')
-  const amm = await AMM.deploy(dapp.address, usd.address)
+  const amm = await AMM.deploy('0x5FbDB2315678afecb367f032d93F642f64180aa3', '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512')
 
   console.log(`AMM contract deployed to: ${amm.address}\n`)
 
