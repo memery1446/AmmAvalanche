@@ -29,18 +29,18 @@ const Navigation = () => {
       params: [{ chainId: e.target.value }],
     })
   }
-                     
 
   return (
+    
     <Navbar className='my-3' expand="lg">
       <img
         alt="logo"
         src={logo}
-        width="40"
-        height="40"
+        width="90"
+        height="90"
         className="d-inline-block align-top mx-3"
       />
-      <Navbar.Brand href="#">Dapp University AMM</Navbar.Brand>
+      <Navbar.Brand href="#">Decentralized Exchange</Navbar.Brand>
 
       <Navbar.Toggle aria-controls="nav" />
       <Navbar.Collapse id="nav" className="justify-content-end">
@@ -65,14 +65,14 @@ const Navigation = () => {
                 seed={account}
                 size={10}
                 scale={3}
-                color="#2187D0"
+                color="#786608"
                 bgColor="#F1F2F9"
                 spotColor="#767F92"
                 className="identicon mx-2"
               />
             </Navbar.Text>
           ) : (
-            <Button onClick={connectHandler}>Connect</Button>
+            <Button variant="secondary" onClick={connectHandler}>Connect</Button>
           )}
 
         </div>
@@ -83,4 +83,3 @@ const Navigation = () => {
 }
 
 export default Navigation;
-

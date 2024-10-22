@@ -120,7 +120,7 @@ const Swap = () => {
 
   return (
     <div>
-      <Card style={{ maxWidth: '450px' }} className='mx-auto px-4'>
+      <Card  style={{ maxWidth: '450px' }} className='mx-auto px-4'>
         {account ? (
           <Form onSubmit={swapHandler} style={{ maxWidth: '450px', margin: '50px auto' }}>
 
@@ -190,7 +190,7 @@ const Swap = () => {
               {isSwapping ? (
                 <Spinner animation="border" style={{ display: 'block', margin: '0 auto' }} />
               ): (
-                <Button type='submit'>Swap</Button>
+                <Button variant="secondary" type='submit' >Swap</Button>
               )}
 
               <Form.Text muted>
@@ -209,7 +209,7 @@ const Swap = () => {
           </p>
         )}
       </Card>
-
+      
       {isSwapping ? (
         <Alert
           message={'Swap Pending...'}

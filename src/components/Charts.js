@@ -32,7 +32,9 @@ const Charts = () => {
   }, [provider, amm, dispatch])
 
   return (
+    
     <div>
+    
       {provider && amm ? (
         <div>
           <Chart
@@ -84,7 +86,9 @@ const Charts = () => {
               ))}
             </tbody>
           </Table>
+          
         </div>
+
 
       ) : (
         <Loading/>

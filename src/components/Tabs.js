@@ -1,9 +1,16 @@
 import Nav from 'react-bootstrap/Nav';
 import { LinkContainer } from "react-router-bootstrap";
+import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card';
 
-const Tabs = () => {
+const Tabs1 = () => {
   return (
-    <Nav variant="pills" defaultActiveKey="/" className='justify-content-center my-4'>
+   
+    
+
+      
+
+    <Nav variant="tabs" style={{ opacity: 0.90 }} defaultActiveKey="/" className="justify-content-center my-4">
       <LinkContainer to="/">
         <Nav.Link>Swap</Nav.Link>
       </LinkContainer>
@@ -17,7 +24,9 @@ const Tabs = () => {
         <Nav.Link>Charts</Nav.Link>
       </LinkContainer>
     </Nav>
+
+   
   );
 }
 
-export default Tabs;
+export default Tabs1;
