@@ -134,7 +134,7 @@ contract AMM{
 	}
 
 	// Returns amount of token1 received when swapping token2
-	function calculateToken2Swap(uint256 _token2Amount) public view returns (uint256 token1Amount)
+	function calculateToken2Swap(uint256 _tokenAmount) public view returns (uint256 tokenAmount)
 	{
 		
 		uint256 token2After = token2Balance + _token2Amount;

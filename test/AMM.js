@@ -27,7 +27,7 @@ describe('AMM', () => {
     investor2 = accounts[3]
 
     const Token = await ethers.getContractFactory('Token')
-    token1 = await Token.deploy('Orchestra Token', 'ORCH', '1000000') // 1 mill
+    token1 = await Token.deploy('DAPP Token', 'DAPP', '1000000') // 1 mill
     token2 = await Token.deploy('USD Token', 'USD', '1000000')  // 1 mill
     
     // Send tokens to the liquidityProvider
