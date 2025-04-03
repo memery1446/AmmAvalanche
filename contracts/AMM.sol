@@ -134,21 +134,20 @@ contract AMM{
 	}
 
 	// Returns amount of token1 received when swapping token2
-	function calculateToken2Swap(uint256 _tokenAmount) public view returns (uint256 tokenAmount)
-	{
-		
-		uint256 token2After = token2Balance + _token2Amount;
-		uint256 token1After = K / token2After;
-		token1Amount = token1Balance - token1After;
+function calculateToken2Swap(uint256 _tokenAmount) public view returns (uint256 token1Amount)
+{
+    uint256 token2After = token2Balance + _tokenAmount;
+    uint256 token1After = K / token2After;
+    token1Amount = token1Balance - token1After;
 
-		// Don't let pool go to -0-
-		if(token1Amount == token1Balance) {
-			token1Amount --;
-	}
+    // Don't let pool go to -0-
+    if(token1Amount == token1Balance) {
+        token1Amount--;
+    }
 
-		require(token1Amount < token1Balance, 'swap cannot exeed pool balance');
+    require(token1Amount < token1Balance, 'swap cannot exceed pool balance');
+}
 
-	}
 
 
 	function swapToken2(uint256 _token2Amount) external returns(uint256 token1Amount){
