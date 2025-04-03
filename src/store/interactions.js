@@ -146,6 +146,7 @@ export const swap = async (provider, amm, token, symbol, amount, dispatch) => {
     await transaction.wait()
 
     if (symbol === "DAPP") {
+      console.log("SWAP triggered")
       transaction = await amm.connect(signer).swapToken1(amount)
     } else {
       transaction = await amm.connect(signer).swapToken2(amount)

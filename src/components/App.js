@@ -1,69 +1,65 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { HashRouter, Routes, Route } from 'react-router-dom'
 import { Container } from 'react-bootstrap'
 import { ethers } from 'ethers'
-import Col from 'react-bootstrap/Col';
 
-import Image from 'react-bootstrap/Image';
-import Row from 'react-bootstrap/Row';
-
-// Components
-import Navigation from './Navigation';
-import Tabs from './Tabs';
-import Swap from './Swap';
-import Deposit from './Deposit';
-import Withdraw from './Withdraw';
-import Charts from './Charts';
-
+// Redux: Actions
 import {
   loadProvider,
   loadNetwork,
   loadAccount,
   loadTokens,
-  loadAMM
+  loadAMM,
+  loadBalances
 } from '../store/interactions'
 
-function App() {
+// ABI + config
+import config from '../config.json'
+import TOKEN_ABI from '../abis/Token.json'
 
+// Components
+import Navigation from './Navigation'
+import Tabs from './Tabs'
+import Swap from './Swap'
+import Deposit from './Deposit'
+import Withdraw from './Withdraw'
+import Charts from './Charts'
+
+function App() {
   const dispatch = useDispatch()
 
   const loadBlockchainData = async () => {
-    // Initiate provider
+    // Load provider and network
     const provider = await loadProvider(dispatch)
-
-    // Fetch current network's chainId (e.g. hardhat: 31337, kovan: 42)
     const chainId = await loadNetwork(provider, dispatch)
 
-    // Reload page when network changes
-    window.ethereum.on('chainChanged', () => {
-      window.location.reload()
-    })
+    // Listen for network/account changes
+    window.ethereum.on('chainChanged', () => window.location.reload())
+    window.ethereum.on('accountsChanged', async () => await loadAccount(dispatch))
 
-    // Fetch current account from Metamask when changed
-    window.ethereum.on('accountsChanged', async () => {
-      await loadAccount(dispatch)
-    })
+    // Load account
+    const account = await loadAccount(dispatch)
 
-    // Initiate contracts
+    // Load token contracts and AMM
     await loadTokens(provider, chainId, dispatch)
-    await loadAMM(provider, chainId, dispatch)
+    const amm = await loadAMM(provider, chainId, dispatch)
+
+    // Load balances
+    const token1 = new ethers.Contract(config[chainId].dapp.address, TOKEN_ABI, provider)
+    const token2 = new ethers.Contract(config[chainId].usd.address, TOKEN_ABI, provider)
+    await loadBalances(amm, [token1, token2], account, dispatch)
   }
 
   useEffect(() => {
     loadBlockchainData()
-  }, []);
+  }, [])
 
-  return(
-    <Container >
+  return (
+    <Container>
       <HashRouter>
-
         <Navigation />
-
-        
-
         <Tabs />
-
         <Routes>
           <Route exact path="/" element={<Swap />} />
           <Route path="/deposit" element={<Deposit />} />
@@ -71,10 +67,8 @@ function App() {
           <Route path="/charts" element={<Charts />} />
         </Routes>
       </HashRouter>
-   
     </Container>
-
   )
 }
 
-export default App;
+export default App
